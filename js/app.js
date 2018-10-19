@@ -1,16 +1,9 @@
-// Inimigos que nosso jogador deve evitar
-class Enemy {
-	// As variáveis aplicadas a nossas instâncias entram aqui.
-	// Fornecemos uma a você para que possa começcar.
-
-	// A imagem/sprite de nossos inimigos, isso usa um
-	// ajudante que é fornecido para carregar imagens
-	// com facilidade.
-	constructor(x, y, speed) {
-		this.sprite = 'images/enemy-bug.png';
+class Characther {
+	constructor(x, y, sprite) {
 		this.x = x;
 		this.y = y;
-		this.speed = speed;
+		this.sprite = sprite;
+
 	}
 
 	get positionX() {
@@ -20,6 +13,31 @@ class Enemy {
 	get positionY() {
 		return this.y;
 	}
+
+	// Desenhe o personagem na tela, método exigido pelo jogo
+	render() {
+		ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+	};
+}
+
+
+// Inimigos que nosso jogador deve evitar
+class Enemy extends Characther {
+	// As variáveis aplicadas a nossas instâncias entram aqui.
+	// Fornecemos uma a você para que possa começcar.
+
+	// A imagem/sprite de nossos inimigos, isso usa um
+	// ajudante que é fornecido para carregar imagens
+	// com facilidade.
+	constructor(x, y, speed, sprite = 'images/enemy-bug.png') {
+		super(x, y, sprite);
+		this.speed = this.initialSpeed = speed;
+	}
+
+	reset() {
+		this.speed = this.initialSpeed;
+	}
+
 	// Atualize a posição do inimigo, método exigido pelo jogo
 	// Parâmetro: dt, um delta de tempo entre ticks
 	update(dt) {
@@ -33,40 +51,36 @@ class Enemy {
 		}
 
 	};
-	// Desenhe o inimigo na tela, método exigido pelo jogo
-	render() {
-		ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-	};
+
 };
 
 
 // Agora, escreva sua própria classe de jogador
 // Esta classe exige um método update(),
 // um render() e um handleInput().
-class Player {
+class Player extends Characther {
 
-	constructor() {
-		this.sprite = 'images/char-boy.png';
-		this.x = 300;
-		this.y = 400;
+	constructor(x = 300, y = 400, sprite = 'images/char-boy.png') {
+		super(x, y, sprite);
+		this.initialX = x;
+		this.initialY = y;
+		this.eventWin = new Event('win');
 	}
 
-	get positionX() {
-		return this.x;
-	}
-
-	get positionY() {
-		return this.y;
+	reset() {
+		this.x = this.initialX;
+		this.y = this.initialY;
 	}
 
 	update() {
-		/* this.x = this.x;
-		this.y = this.y; */
+
+		if(this.y <= 0) {
+			this.reset();
+			document.dispatchEvent(this.eventWin);
+		}
 
 	};
-	render() {
-		ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-	}
+
 	handleInput(value) {
 		console.log(value);
 		if(value === 'up' && this.y > 0) {
@@ -80,16 +94,6 @@ class Player {
 		}
 		if (value === 'right' && this.x < 400) {
 			this.x += 101;
-		}
-	}
-}
-
-const checkCollisions = (allEnemies, player) => {
-
-	for(const enemy of allEnemies) {
-
-		if ((player.positionX >= enemy.positionX - 75 && player.positionX <= enemy.positionX + 75) && (player.positionY >= enemy.positionY - 50 && player.positionY <= enemy.positionY + 50)) {
-			alert('foi');
 		}
 	}
 }
@@ -114,3 +118,37 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+let level = 1;
+
+// Ouve pelo evento.
+document.addEventListener('win', (e) => {
+	console.log('ganhou');
+	changeLevel();
+
+}, false);
+
+
+const changeLevel = () => {
+	document.getElementById('level').innerHTML = level = level + 1;
+	for (const enemy of allEnemies) {
+
+		enemy.speed *= 1.5;
+	}
+
+}
+
+const checkCollisions = (allEnemies, player) => {
+
+	for (const enemy of allEnemies) {
+
+		if ((player.positionX >= enemy.positionX - 75 && player.positionX <= enemy.positionX + 75) && (player.positionY >= enemy.positionY - 50 && player.positionY <= enemy.positionY + 50)) {
+			player.reset();
+			document.getElementById('level').innerHTML = level = 1;
+
+			allEnemies.forEach(element => {
+				element.reset();
+			});
+		}
+	}
+}
