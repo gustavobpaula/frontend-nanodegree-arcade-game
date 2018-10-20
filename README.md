@@ -11,4 +11,4 @@ You need a package manager like npm or yarn to install the project dependencies.
 * The game will run on localhost http://localhost:3000/
 
 ## How to play
-Use the arrow keys (⬆, ⬇, ⬅, ➡) to move your character until he reaches the water without colliding with the enemies. Quando atravessar sem ser atingido o nível de dificuldade irá aumentar com inimigos mais rápidos.
+Use the arrow keys (⬆, ⬇, ⬅, ➡) to move your character until he reaches the water without colliding with the enemies. When crossing without being hit the level of difficulty will increase with faster enemies.
