@@ -21,11 +21,11 @@ var Engine = (function(global) {
      * canvas, configure a altura/largura dos elementos do
      * canvas e adicione isso ao DOM.
      */
-    var doc = global.document,
-        win = global.window,
+    var doc = global.document || document,
+        win = global.window || window,
         canvas = doc.createElement('canvas'),
-        ctx = canvas.getContext('2d'),
         lastTime;
+    win.ctx = canvas.getContext('2d'),
 
     canvas.width = 505;
     canvas.height = 606;

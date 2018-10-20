@@ -1,3 +1,13 @@
 body {
     text-align: center;
+    font-family: cursive;
+}
+h1 {
+    font-family: fantasy;
+    font-size: 60px;
+    margin-bottom: 0;
+}
+
+button {
+    font-family: cursive;
 }
